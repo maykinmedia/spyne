@@ -500,6 +500,11 @@ class XmlDocument(SubXmlBase):
 
         handler = self.serialization_handlers[cls]
 
+        # Don't include empty values for
+        # non-nillable optional attributes.
+        if inst is None and cls.Attributes.min_occurs == 0:
+            return
+
         if inst is None:
             inst = cls_attrs.default
 
@@ -829,10 +834,7 @@ class XmlDocument(SubXmlBase):
                                         ret.throw(Break())
                                     except StopIteration:
                                         pass
-
-                # Don't include empty values for
-                # non-nillable optional attributes.
-                elif subvalue is not None or v.Attributes.min_occurs > 0:
+                else:
                     ret = self.to_parent(ctx, v, subvalue, parent, sub_ns,
                                                                        sub_name)
                     if ret is not None:
