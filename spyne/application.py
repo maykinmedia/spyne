@@ -140,6 +140,17 @@ class Application(object):
 
         register_application(self)
 
+    def add_custom_elements(self, document):
+        """
+        Allow custom elements or attributes to be registered.
+
+        TODO: This is a bit of a hack to allow custom elements/attributes to be
+        registered in the WSDL. The reason this is not done on Interface or XmlSchema
+        level is because I can't easily override the Interface class or the
+        XmlSchema classes
+        """
+        pass
+
     def process_request(self, ctx):
         """Takes a MethodContext instance. Returns the response to the request
         as a native python object. If the function throws an exception, it

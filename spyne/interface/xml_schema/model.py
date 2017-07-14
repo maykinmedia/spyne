@@ -53,8 +53,13 @@ ATTR_NAMES = cdict({
 })
 
 def xml_attribute_add(cls, name, element, document):
-    element.set('name', name)
-    element.set('type', cls.type.get_type_name_ns(document.interface))
+
+    if cls.ref:
+        new_ref = "%s:%s" % (cls.type.get_namespace_prefix(document.interface), cls.ref)
+        element.set('ref', new_ref)
+    else:
+        element.set('name', name)
+        element.set('type', cls.type.get_type_name_ns(document.interface))
 
     if cls._use is not None:
         element.set('use', cls._use)

@@ -104,8 +104,9 @@ class _SimpleTypeInfoElement(object):
 
 
 class XmlModifier(ModelBase):
-    def __new__(cls, type, ns=None):
+    def __new__(cls, type, ns=None, ref=None):
         retval = cls.customize()
+        retval.ref = ref
         retval.type = type
         retval.Attributes = type.Attributes
         retval._ns = ns
@@ -179,8 +180,8 @@ class XmlData(XmlModifier):
 class XmlAttribute(XmlModifier):
     """Items which are marshalled as attributes of the parent element."""
 
-    def __new__(cls, type_, use=None, ns=None):
-        retval = super(XmlAttribute, cls).__new__(cls, type_, ns)
+    def __new__(cls, type_, use=None, ns=None, ref=None):
+        retval = super(XmlAttribute, cls).__new__(cls, type_, ns, ref)
         retval._use = use
         if retval.type.Attributes.min_occurs > 0 and retval._use is None:
             retval._use = 'required'

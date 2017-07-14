@@ -132,6 +132,9 @@ class XmlSchema(InterfaceDocumentBase):
         for cls in chain.from_iterable(toposort2(self.interface.deps)):
             self.add(cls, tags)
 
+        # Allow custom elements or attributes to be registered.
+        self.interface.app.add_custom_elements(self)
+
         for pref in self.namespaces:
             schema = self.get_schema_node(pref)
 
