@@ -1006,7 +1006,13 @@ class XmlDocument(SubXmlBase):
                 setattr(inst, key, value)
 
         for key, value_str in elt.attrib.items():
+            # TODO: This needs a proper solution, this will blow up in our face at
+            # some point. In certain cases we use 'ref'= to refer to a attribute
+            # in a different namespace a namespace can show up here, for now just remove it.
+            key = key[key.find('}') + 1:]
+
             member = flat_type_info.get(key, None)
+
             if member is None:
                 member, key = cls._type_info_alt.get(key, (None, key))
                 if member is None:
