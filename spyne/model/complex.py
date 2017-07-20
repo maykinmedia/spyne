@@ -1141,6 +1141,9 @@ class ComplexModelBase(ModelBase):
         retval.__namespace__ = cls.__namespace__
         retval.Attributes.parent_variant = cls
 
+        if 'ref' in kwargs:
+            retval.ref = kwargs.get('ref', None)
+
         dca = retval.Attributes._delayed_child_attrs
         if retval.Attributes._delayed_child_attrs is None:
             retval.Attributes._delayed_child_attrs = {}

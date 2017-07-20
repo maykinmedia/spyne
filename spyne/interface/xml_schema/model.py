@@ -219,9 +219,13 @@ def complex_add(document, cls, tags):
             type_name_ns = v.__orig__.get_type_name_ns(document.interface)
 
         member = etree.Element(a.schema_tag)
+        ref = a.ref if hasattr(a, 'ref') and a.ref else None
         if a.schema_tag == XSD('element'):
-            member.set('name', name)
-            member.set('type', type_name_ns)
+            if ref:
+                member.set('ref', type_name_ns)
+            else:
+                member.set('name', name)
+                member.set('type', type_name_ns)
 
         elif a.schema_tag == XSD('any') and issubclass(v, AnyXml):
             if a.namespace is not None:
@@ -245,11 +249,12 @@ def complex_add(document, cls, tags):
 
             member.set('maxOccurs', val)
 
-        if a.default is not None:
-            member.set('default', _prot.to_unicode(v, a.default))
+        if not ref:
+            if a.default is not None:
+                member.set('default', _prot.to_unicode(v, a.default))
 
-        if bool(a.nillable) != False: # False is the xml schema default
-            member.set('nillable', 'true')
+            if bool(a.nillable) != False: # False is the xml schema default
+                member.set('nillable', 'true')
 
         v_doc_text = v.get_documentation()
         if v_doc_text:
@@ -283,8 +288,13 @@ def complex_add(document, cls, tags):
     # simple node
     complex_type_name = cls.Attributes.sub_name or cls.get_type_name()
     element = etree.Element(XSD('element'))
-    element.set('name', complex_type_name)
-    element.set('type', cls.get_type_name_ns(document.interface))
+
+    ref = cls.ref if hasattr(cls, 'ref') and cls.ref else None
+    if ref:
+        element.set('ref', cls.get_type_name_ns(document.interface))
+    else:
+        element.set('name', complex_type_name)
+        element.set('type', cls.get_type_name_ns(document.interface))
 
     document.add_element(cls, element)
 
