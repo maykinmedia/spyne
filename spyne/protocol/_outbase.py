@@ -141,7 +141,7 @@ class OutProtocolBase(ProtocolMixin):
             Duration: self.duration_to_bytes,
             ByteArray: self.byte_array_to_unicode,
             XmlAttribute: self.xmlattribute_to_unicode,
-            ComplexModelBase: self.complex_model_base_to_bytes,
+            ComplexModelBase: self.complex_model_base_to_unicode,
         })
 
         self._to_bytes_iterable_handlers = cdict({
@@ -561,8 +561,15 @@ class OutProtocolBase(ProtocolMixin):
             return tuple()
         raise TypeError("This protocol can only serialize primitives.")
 
-    def complex_model_base_to_bytes(self, cls, value, **_):
-        raise TypeError("Only primitives can be serialized to string.")
+    def complex_model_base_to_bytes(self, cls, value, **kwargs):
+        if 'data' not in cls._type_info:
+            raise TypeError("Only primitives can be serialized to string.")
+        return self.to_bytes(cls._type_info['data'].type, value, **kwargs)
+
+    def complex_model_base_to_unicode(self, cls, value, **kwargs):
+        if 'data' not in cls._type_info:
+            raise TypeError("Only primitives can be serialized to string.")
+        return self.to_unicode(cls._type_info['data'].type, value, **kwargs)
 
     def xmlattribute_to_bytes(self, cls, string, **kwargs):
         return self.to_bytes(cls.type, string, **kwargs)
