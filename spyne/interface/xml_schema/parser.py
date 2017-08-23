@@ -423,6 +423,9 @@ class XmlSchemaParser(object):
                 if e.nillable != True:  # spyne default
                     kwargs['nillable'] = e.nillable
 
+                if e.fixed is not None:
+                    kwargs['fixed'] = _prot.from_string(t, e.fixed)
+
                 if e.default is not None:
                     kwargs['default'] = _prot.from_string(t, e.default)
 

@@ -45,11 +45,11 @@ _prot = XmlDocument()
 # proper subclass definition for each type. This must be updated as the Xml
 # Schema implementation makes progress.
 ATTR_NAMES = cdict({
-    ModelBase: set(['values']),
+    ModelBase: set(['values', ]),
     Decimal: set(['pattern', 'gt', 'ge', 'lt', 'le', 'values', 'total_digits',
-                                                            'fraction_digits']),
+                  'fraction_digits', ]),
     Integer: set(['pattern', 'gt', 'ge', 'lt', 'le', 'values', 'total_digits']),
-    Unicode: set(['values', 'min_len', 'max_len', 'pattern']),
+    Unicode: set(['values', 'min_len', 'max_len', 'pattern', ]),
 })
 
 def xml_attribute_add(cls, name, element, document):
@@ -68,6 +68,11 @@ def xml_attribute_add(cls, name, element, document):
 
     if d is not None:
         element.set('default', _prot.to_unicode(cls.type, d))
+
+    f = cls.type.Attributes.fixed
+
+    if f is not None:
+        element.set('fixed', _prot.to_unicode(cls.type, f))
 
 
 def _check_extension_attrs(cls):
@@ -248,6 +253,9 @@ def complex_add(document, cls, tags):
                 val = str(val)
 
             member.set('maxOccurs', val)
+
+        if a.fixed is not None:
+            member.set('fixed', _prot.to_unicode(v, a.fixed))
 
         if not ref:
             if a.default is not None:

@@ -287,6 +287,9 @@ class ModelBase(object):
         will imply an iterable of objects as native python type. Can be set to
         ``decimal.Decimal("inf")`` for arbitrary number of arguments."""
 
+        fixed = None
+        """A fixed value."""
+
         schema_tag = spyne.const.xml.XSD('element')
         """The tag used to add a primitives as child to a complex type in the
         xml schema."""
@@ -833,7 +836,8 @@ class SimpleModel(ModelBase):
                     cls.Attributes.values is None or
                     len(cls.Attributes.values) == 0 or (
                         (value is None     and cls.Attributes.nillable) or
-                        (value is not None and value in cls.Attributes.values)
+                        (value is not None and value in cls.Attributes.values) or
+                        (value is not None and value == cls.Attributes.fixed)
                     )
                 )
             )
