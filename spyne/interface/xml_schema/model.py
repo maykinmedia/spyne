@@ -227,7 +227,8 @@ def complex_add(document, cls, tags):
         ref = a.ref if hasattr(a, 'ref') and a.ref else None
         if a.schema_tag == XSD('element'):
             if ref:
-                member.set('ref', type_name_ns)
+                new_ref = '%s:%s' % (v.get_namespace_prefix(document.interface), ref)
+                member.set('ref', new_ref)
             else:
                 member.set('name', name)
                 member.set('type', type_name_ns)
@@ -297,12 +298,8 @@ def complex_add(document, cls, tags):
     complex_type_name = cls.Attributes.sub_name or cls.get_type_name()
     element = etree.Element(XSD('element'))
 
-    ref = cls.ref if hasattr(cls, 'ref') and cls.ref else None
-    if ref:
-        element.set('ref', cls.get_type_name_ns(document.interface))
-    else:
-        element.set('name', complex_type_name)
-        element.set('type', cls.get_type_name_ns(document.interface))
+    element.set('name', complex_type_name)
+    element.set('type', cls.get_type_name_ns(document.interface))
 
     document.add_element(cls, element)
 
